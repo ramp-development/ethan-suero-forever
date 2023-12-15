@@ -1,7 +1,11 @@
-import { greetUser } from '$utils/greet';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+import { pages } from './pages';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  const name = 'John Doe';
-  greetUser(name);
+  pages();
+
+  gsap.registerPlugin(ScrollTrigger);
 });
