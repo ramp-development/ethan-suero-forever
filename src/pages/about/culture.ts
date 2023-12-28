@@ -6,10 +6,14 @@ import { queryElement } from '$utils/queryElement';
 export const culture = () => {
   console.log('culture');
 
-  const component = queryElement<HTMLDivElement>('.culture-col-wrap');
+  const component = queryElement<HTMLDivElement>('[data-culture="component"]');
   if (!component) return;
 
-  const list = component.firstElementChild as HTMLDivElement;
+  const accordion = queryElement<HTMLDivElement>('[data-culture="accordion"]', component);
+  const marquee = queryElement<HTMLDivElement>('[data-culture="marquee"]', component);
+  if (!accordion || !marquee) return;
+
+  const list = accordion.firstElementChild as HTMLDivElement;
   if (!list) return;
 
   const items = [...list.children] as HTMLDivElement[];
@@ -22,7 +26,7 @@ export const culture = () => {
 
     // get the height multiplier
     const cultureHeightMultiplier = ((): number => {
-      const value = component.getAttribute('culture-height-multiplier') ?? 1;
+      const value = accordion.getAttribute('culture-height-multiplier') ?? 1;
       const parsed = parseStringToNumber(value);
       if (!parsed) return 1;
       return parsed as number;
@@ -30,22 +34,42 @@ export const culture = () => {
 
     // get the scrub value
     const culterScrub = (() => {
-      const value = component.getAttribute('culture-scrub-value') ?? true;
+      const value = accordion.getAttribute('culture-scrub-value') ?? true;
       if (value === 'true') return true;
       const parsed = parseStringToNumber(value as string);
       if (!parsed) return true;
       return parsed;
     })();
 
-    // set the height of the component
-    component.style.height = component.offsetHeight * cultureHeightMultiplier + 'px';
+    // set the height of the accordion and component
+    const accordionHeight = accordion.offsetHeight * cultureHeightMultiplier;
+    accordion.style.height = `${accordionHeight}px`;
+    const marqueeHeight = marquee.offsetHeight;
+    component.style.height = `${accordionHeight + marqueeHeight}px`;
 
     // set the height of the list to the height of the first child
     const containerHeight = (items.length - 1) * 8 + firstChildHeight;
     list.style.height = `${containerHeight}px`;
     list.style.position = 'sticky';
-    list.style.top = `${window.innerHeight - containerHeight}px`;
+    list.style.top = `${window.innerHeight - containerHeight - marqueeHeight}px`;
     list.style.overflow = 'hidden';
+
+    // place the marquee
+    marquee.style.position = 'sticky';
+    marquee.style.bottom = `0px`;
+
+    // create the marquee timeline
+    const marqueeTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: component,
+        start: `top ${window.innerHeight - containerHeight - marqueeHeight}`,
+        end: `+=${containerHeight}`,
+        scrub: 0,
+        markers: true,
+      },
+    });
+
+    marqueeTimeline.from(marquee, { marginTop: containerHeight, ease: 'none' }, 0);
 
     // for all but the first child, set their position to absolute and add their offset
     items.forEach((item, index) => {
@@ -59,13 +83,14 @@ export const culture = () => {
     const timeline = gsap.timeline({
       scrollTrigger: {
         trigger: component,
-        start: `top ${window.innerHeight - containerHeight}`,
+        start: `top ${window.innerHeight - containerHeight - marqueeHeight}`,
         end: 'bottom bottom',
         scrub: culterScrub,
+        markers: true,
       },
     });
 
-    // animate each child to the top of the component minus dynamic offset
+    // animate each child to the top of the accordion minus dynamic offset
     items.forEach((item, index) => {
       if (index === 0) return;
       timeline.to(item, {
@@ -74,14 +99,18 @@ export const culture = () => {
     });
 
     return () => {
-      // set the height of the component
+      // set the height of the accordion
       component.style.removeProperty('height');
+      accordion.style.removeProperty('height');
 
       // set the height of the list to the height of the first child
       list.style.removeProperty('height');
       list.style.removeProperty('position');
       list.style.removeProperty('top');
       list.style.removeProperty('overflow');
+
+      marquee.style.removeProperty('position');
+      marquee.style.removeProperty('bottom');
 
       // for all but the first child, set their position to absolute and add their offset
       items.forEach((item, index) => {
