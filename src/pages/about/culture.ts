@@ -65,7 +65,6 @@ export const culture = () => {
         start: `top ${window.innerHeight - containerHeight - marqueeHeight}`,
         end: `+=${containerHeight}`,
         scrub: 0,
-        markers: true,
       },
     });
 
@@ -86,7 +85,6 @@ export const culture = () => {
         start: `top ${window.innerHeight - containerHeight - marqueeHeight}`,
         end: 'bottom bottom',
         scrub: culterScrub,
-        markers: true,
       },
     });
 
