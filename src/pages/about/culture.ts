@@ -5,6 +5,7 @@ import { queryElement } from '$utils/queryElement';
 
 export const culture = () => {
   console.log('culture');
+  gsap.registerPlugin(ScrollTrigger);
 
   const component = queryElement<HTMLDivElement>('[data-culture="component"]');
   if (!component) return;

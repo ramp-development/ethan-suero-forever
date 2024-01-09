@@ -12,7 +12,7 @@ export const locations = () => {
     const $index = $this.index();
     const $image = $target.find('.location-hover-image').eq($index);
 
-    gsap.from($image, { scale: 2, duration: 0.3, ease: 'power1.inOut' });
+    gsap.from($image, { scale: 2, duration: 0.5, ease: 'power1.inOut' });
     gsap.to($target, { xPercent: $index * -100, duration: 0.3, ease: 'power1.inOut' });
   });
 };
