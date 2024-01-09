@@ -8,8 +8,12 @@ export const hero = () => {
 
   const trigger = queryElement('.forever_trigger');
   if (!trigger) return;
+
+  const reel = queryElement('.forever_reel', trigger);
+  const textContent = queryElement('.forever_text-content', trigger);
+  const reelText = queryElement('.forever_reel-text', trigger);
   const mask = queryElement('.forever_mask', trigger);
-  if (!mask) return;
+  if (!reel || !textContent || !reelText || !mask) return;
 
   const timeline = gsap.timeline({
     defaults: {
@@ -20,10 +24,17 @@ export const hero = () => {
       trigger: trigger,
       start: 'top top',
       end: 'bottom top',
-      scrub: 2,
-      markers: true,
+      scrub: 1,
     },
   });
 
-  timeline.to(mask, { scale: 51, xPercent: -255, yPercent: 112.5 });
+  timeline.from(reel, { opacity: 0, duration: 0.1 }, '0');
+  timeline.from(reel, { scale: 2 }, '0');
+
+  timeline.to(textContent, { y: '-10rem', opacity: 0, duration: 0.1 }, '0');
+
+  timeline.to(reelText, { y: '-4rem' }, '0');
+  timeline.to(mask, { scale: 51, xPercent: -255, yPercent: 112.5 }, '0');
+
+  timeline.to(mask, { opacity: 0, duration: 0.1 }, 0.7);
 };
