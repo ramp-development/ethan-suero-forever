@@ -1,9 +1,11 @@
+import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { queryElement } from '$utils/queryElement';
 
 export const hero = () => {
   console.log('hero');
+
   gsap.registerPlugin(ScrollTrigger);
 
   const trigger = queryElement('.forever_trigger');
@@ -21,20 +23,17 @@ export const hero = () => {
       duration: 1,
     },
     scrollTrigger: {
-      trigger: trigger,
+      trigger,
       start: 'top top',
       end: 'bottom top',
       scrub: 1,
     },
   });
 
-  timeline.from(reel, { opacity: 0, duration: 0.1 }, '0');
+  timeline.to(reel, { opacity: 1, duration: 0.1 }, '0');
   timeline.from(reel, { scale: 2 }, '0');
-
   timeline.to(textContent, { y: '-10rem', opacity: 0, duration: 0.1 }, '0');
-
   timeline.to(reelText, { y: '-4rem' }, '0');
   timeline.to(mask, { scale: 51, xPercent: -255, yPercent: 112.5 }, '0');
-
   timeline.to(mask, { opacity: 0, duration: 0.1 }, 0.7);
 };
